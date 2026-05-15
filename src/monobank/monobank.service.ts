@@ -14,6 +14,7 @@ export class MonobankService {
   private readonly logger = new Logger(MonobankService.name);
   private readonly apiUrl: string;
   private readonly cacheTtlSeconds: number;
+  private fetchPromise: ResultAsync<Map<string, MonobankRate>, AppError> | null = null;
 
   constructor(
     private readonly httpService: HttpService,
@@ -38,6 +39,16 @@ export class MonobankService {
       this.logger.warn('Redis read failed, falling through to API', error);
     }
 
+    if (!this.fetchPromise) {
+      this.fetchPromise = this.fetchAndCache().finally(() => {
+        this.fetchPromise = null;
+      });
+    }
+
+    return this.fetchPromise;
+  }
+
+  private async fetchAndCache(): ResultAsync<Map<string, MonobankRate>, AppError> {
     try {
       const response = await firstValueFrom(
         this.httpService.get<MonobankRate[]>(this.apiUrl),

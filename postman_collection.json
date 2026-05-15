@@ -1,0 +1,155 @@
+{
+  "info": {
+    "name": "Currency Converter API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:3000",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Currency",
+      "item": [
+        {
+          "name": "Convert USD to UAH",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": "{{baseUrl}}/currency/convert",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"from\": \"USD\",\n  \"to\": \"UAH\",\n  \"amount\": 100\n}",
+              "options": { "raw": { "language": "json" } }
+            }
+          }
+        },
+        {
+          "name": "Convert EUR to USD",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": "{{baseUrl}}/currency/convert",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"from\": \"EUR\",\n  \"to\": \"USD\",\n  \"amount\": 50\n}",
+              "options": { "raw": { "language": "json" } }
+            }
+          }
+        },
+        {
+          "name": "Convert UAH to EUR",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": "{{baseUrl}}/currency/convert",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"from\": \"UAH\",\n  \"to\": \"EUR\",\n  \"amount\": 4000\n}",
+              "options": { "raw": { "language": "json" } }
+            }
+          }
+        },
+        {
+          "name": "Convert GBP to PLN (cross via UAH)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": "{{baseUrl}}/currency/convert",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"from\": \"GBP\",\n  \"to\": \"PLN\",\n  \"amount\": 200\n}",
+              "options": { "raw": { "language": "json" } }
+            }
+          }
+        },
+        {
+          "name": "Same currency (USD to USD)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": "{{baseUrl}}/currency/convert",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"from\": \"USD\",\n  \"to\": \"USD\",\n  \"amount\": 100\n}",
+              "options": { "raw": { "language": "json" } }
+            }
+          }
+        },
+        {
+          "name": "[Error] Unknown currency code",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": "{{baseUrl}}/currency/convert",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"from\": \"XYZ\",\n  \"to\": \"USD\",\n  \"amount\": 100\n}",
+              "options": { "raw": { "language": "json" } }
+            }
+          }
+        },
+        {
+          "name": "[Error] Invalid DTO - lowercase code",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": "{{baseUrl}}/currency/convert",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"from\": \"usd\",\n  \"to\": \"UAH\",\n  \"amount\": 100\n}",
+              "options": { "raw": { "language": "json" } }
+            }
+          }
+        },
+        {
+          "name": "[Error] Invalid DTO - negative amount",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": "{{baseUrl}}/currency/convert",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"from\": \"USD\",\n  \"to\": \"UAH\",\n  \"amount\": -50\n}",
+              "options": { "raw": { "language": "json" } }
+            }
+          }
+        },
+        {
+          "name": "[Error] Invalid DTO - missing fields",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": "{{baseUrl}}/currency/convert",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"from\": \"USD\"\n}",
+              "options": { "raw": { "language": "json" } }
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
