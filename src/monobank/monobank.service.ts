@@ -1,8 +1,9 @@
-import { Inject, Injectable, Logger } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { HttpService } from '@nestjs/axios';
 import { ConfigService } from '@nestjs/config';
 import { firstValueFrom } from 'rxjs';
 import Redis from 'ioredis';
+import { InjectPinoLogger, PinoLogger } from 'nestjs-pino';
 import { err, ok, ResultAsync } from '../common/result';
 import { AppError } from '../common/errors';
 import { MonobankRate } from './interfaces/monobank-rate.interface';
@@ -11,7 +12,6 @@ const RATES_CACHE_KEY = 'monobank:rates';
 
 @Injectable()
 export class MonobankService {
-  private readonly logger = new Logger(MonobankService.name);
   private readonly apiUrl: string;
   private readonly cacheTtlSeconds: number;
   private fetchPromise: ResultAsync<
@@ -23,6 +23,8 @@ export class MonobankService {
     private readonly httpService: HttpService,
     private readonly config: ConfigService,
     @Inject('REDIS_CLIENT') private readonly redis: Redis,
+    @InjectPinoLogger(MonobankService.name)
+    private readonly logger: PinoLogger,
   ) {
     this.apiUrl = this.config.get<string>(
       'MONOBANK_API_URL',
@@ -39,7 +41,7 @@ export class MonobankService {
         return ok(new Map(Object.entries(obj)));
       }
     } catch (error) {
-      this.logger.warn('Redis read failed, falling through to API', error);
+      this.logger.warn({ err: error }, 'Redis read failed, falling through to API');
     }
 
     if (!this.fetchPromise) {
@@ -73,15 +75,12 @@ export class MonobankService {
           this.cacheTtlSeconds,
         );
       } catch (cacheError) {
-        this.logger.warn(
-          'Redis write failed, proceeding without cache',
-          cacheError,
-        );
+        this.logger.warn({ err: cacheError }, 'Redis write failed, proceeding without cache');
       }
 
       return ok(map);
     } catch (apiError) {
-      this.logger.error('Monobank API request failed', apiError);
+      this.logger.error({ err: apiError }, 'Monobank API request failed');
       return err({ type: 'MONOBANK_API_UNAVAILABLE', cause: apiError });
     }
   }

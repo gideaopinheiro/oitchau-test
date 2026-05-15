@@ -1,5 +1,6 @@
 import { plainToInstance, Type } from 'class-transformer';
 import {
+  IsIn,
   IsInt,
   IsNotEmpty,
   IsOptional,
@@ -29,6 +30,11 @@ class EnvironmentVariables {
   @IsInt()
   @Min(1)
   CACHE_TTL_SECONDS: number;
+
+  @IsOptional()
+  @IsString()
+  @IsIn(['fatal', 'error', 'warn', 'info', 'debug', 'trace', 'silent'])
+  LOG_LEVEL: string;
 }
 
 export function validate(config: Record<string, unknown>) {
