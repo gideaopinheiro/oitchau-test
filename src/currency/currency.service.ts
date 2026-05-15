@@ -18,8 +18,10 @@ export class CurrencyService {
     const fromCode = ISO_CURRENCY_CODES[from];
     const toCode = ISO_CURRENCY_CODES[to];
 
-    if (fromCode === undefined) return err({ type: 'UNKNOWN_CURRENCY_CODE', code: from });
-    if (toCode === undefined) return err({ type: 'UNKNOWN_CURRENCY_CODE', code: to });
+    if (fromCode === undefined)
+      return err({ type: 'UNKNOWN_CURRENCY_CODE', code: from });
+    if (toCode === undefined)
+      return err({ type: 'UNKNOWN_CURRENCY_CODE', code: to });
 
     if (fromCode === toCode) {
       return ok({ from, to, amount, convertedAmount: amount, rate: 1 });
@@ -29,7 +31,12 @@ export class CurrencyService {
     if (!ratesResult.ok) return ratesResult;
 
     const rates = ratesResult.value;
-    const convertedAmount = this.resolveConversion(rates, fromCode, toCode, amount);
+    const convertedAmount = this.resolveConversion(
+      rates,
+      fromCode,
+      toCode,
+      amount,
+    );
 
     if (convertedAmount === null) {
       return err({ type: 'CURRENCY_PAIR_NOT_SUPPORTED', from, to });
@@ -74,7 +81,10 @@ export class CurrencyService {
     return null;
   }
 
-  private getToUAHRate(rates: Map<string, MonobankRate>, code: number): number | null {
+  private getToUAHRate(
+    rates: Map<string, MonobankRate>,
+    code: number,
+  ): number | null {
     if (code === UAH_CODE) return 1;
 
     const pair = rates.get(`${code}:${UAH_CODE}`);

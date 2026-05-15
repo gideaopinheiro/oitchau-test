@@ -14,7 +14,10 @@ export class MonobankService {
   private readonly logger = new Logger(MonobankService.name);
   private readonly apiUrl: string;
   private readonly cacheTtlSeconds: number;
-  private fetchPromise: ResultAsync<Map<string, MonobankRate>, AppError> | null = null;
+  private fetchPromise: ResultAsync<
+    Map<string, MonobankRate>,
+    AppError
+  > | null = null;
 
   constructor(
     private readonly httpService: HttpService,
@@ -48,7 +51,10 @@ export class MonobankService {
     return this.fetchPromise;
   }
 
-  private async fetchAndCache(): ResultAsync<Map<string, MonobankRate>, AppError> {
+  private async fetchAndCache(): ResultAsync<
+    Map<string, MonobankRate>,
+    AppError
+  > {
     try {
       const response = await firstValueFrom(
         this.httpService.get<MonobankRate[]>(this.apiUrl),
@@ -67,7 +73,10 @@ export class MonobankService {
           this.cacheTtlSeconds,
         );
       } catch (cacheError) {
-        this.logger.warn('Redis write failed, proceeding without cache', cacheError);
+        this.logger.warn(
+          'Redis write failed, proceeding without cache',
+          cacheError,
+        );
       }
 
       return ok(map);
